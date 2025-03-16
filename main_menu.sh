@@ -18,8 +18,8 @@ function main_menu(){
         "Drop A Database" \
         )
         if [ $? -eq 1 ];then
+            pacMan "....Exiting....  " 0.05 "."
             echo "Thanks for using our Database Engine "
-            pacMan "Exiting....  " 0. "."
             exit
         else
             case $choice in

@@ -24,8 +24,8 @@ function tables_menu(){
         "Update Table" \
         )
         if [ $? -eq 1 ];then
+            pacMan "....Exiting....  " 0.05 "."
             echo "Thanks for using our Database Engine "
-            pacMan "Exiting....  " 0. "."
             exit
         else
             case $choice in
@@ -40,7 +40,7 @@ function tables_menu(){
                 "Select From Table" )
                     select_from_table;;
                 "Delete From Table" )
-                    delete_from_table;;
+                   delete_from_table;;
                 "Update Table" )
                     update_table;;
                 *)
@@ -49,4 +49,3 @@ function tables_menu(){
         fi
     done
 }
-tables_menu 
