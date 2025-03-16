@@ -1,5 +1,11 @@
 #!/bin/bash
 
+source utils.sh
+source create_database.sh
+source list_databases.sh
+source connect_to_database.sh
+source drop_database.sh
+
 function main_menu(){
     while true; do
         choice=$(zenity --list --width=500 --height=450\
@@ -12,18 +18,19 @@ function main_menu(){
         "Drop A Database" \
         )
         if [ $? -eq 1 ];then
-            echo " Exiting.... thanks for using our Database Engine "
+            echo "Thanks for using our Database Engine "
+            pacMan "Exiting....  " 0. "."
             exit
         else
             case $choice in
                 "Create a Database" )  
-                    source create_database.sh;;
+                    create_database;;
                 "List All DataBases" )
-                    source list_databases.sh;;
+                    list_databases;;
                 "Connect TO A Database" )
-                    source connect_to_database.sh;;
+                    connect_to_database;;
                 "Drop A Database" )
-                    source drop_database.sh;;
+                    drop_database;;
                 *)
                     zenity --error --text="Invalid selection. Try again." ;;
             esac
