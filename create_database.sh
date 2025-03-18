@@ -1,34 +1,35 @@
 #! /bin/bash
 
+source utils.sh
+
 create_database() {
     if [[ ! -d "./databases" ]]; then
         mkdir -p "./databases"
     fi
 
     while true; do
-        read -p "Enter the name of the database or type exit to return to the main menu: " database_name
+        database_name=$(zenity --entry --title="Create to Database" --text="Enter database name:" --width=500 --height=450)
 
-        if [[ "$database_name" == "exit" ]]; then
-            echo "Returning to the main menu."
+        if [ $? -eq 1 ];then
             return
         fi
 
         if [[ "$database_name" =~ [[:space:]] ]]; then
-            echo "Spaces are not allowed."
+            zenity --error --text="Spaces are not allowed."
             continue
         fi
 
         if [[ ! "$database_name" =~ ^[a-zA-Z][a-zA-Z0-9_]{0,39}$ ]]; then
-            echo "Invalid database name use only characters, underscores, starting with a letter"
+            zenity --error --text="Invalid database name use only characters, underscores, starting with a letter."
             continue
         fi
 
         if [[ -d "./databases/$database_name" ]]; then
-            echo "Database '$database_name' already exists. Choose another name"
+            zenity --error --text="Database '$database_name' already exists. Choose another name."
             continue
         else
             mkdir -p "./databases/$database_name"
-            echo "Database '$database_name' created successfully."
+            zenity --info --text="Database '$database_name' created successfully."
         fi
 
         break 

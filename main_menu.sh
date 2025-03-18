@@ -18,9 +18,7 @@ function main_menu(){
         "Drop A Database" \
         )
         if [ $? -eq 1 ];then
-            pacMan "....Exiting....  " 0.05 "."
-            echo "Thanks for using our Database Engine "
-            exit
+            exit_program
         else
             case $choice in
                 "Create a Database" )  

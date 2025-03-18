@@ -1,9 +1,22 @@
 #!/usr/bin/bash
 
+function is_db_dir_exist() {
+    local db_path="$1"
 
- # Usage: pacMan inputString interval pad
-# Example: pacman "Hello World" 0.5 "*"
-function pacMan () {
+    if [[ ! -d "$db_path" || -z "$(ls -A "$db_path")" ]]; then
+        return 1
+    else
+        return 0
+    fi
+}
+
+function exit_program(){
+            pacMan "....Exiting....  " 0.05 "."
+            echo "Thanks for using our Database Engine "
+            exit
+}
+
+function pacMan() {
     local string="${1}"
     local interval="${2}"
     : "${interval:=0.2}"
@@ -12,24 +25,35 @@ function pacMan () {
     local length=${#string}
     local padding=""
 
-    # Comment out next two lines if you are using CTRL+C event handler.
-    trap 'tput cnorm; echo' EXIT
-    trap 'exit 127' HUP INT TERM
+    # Hide the cursor
+    tput civis
 
-    tput civis # hide cursor
-    tput sc # save cursor position
+    # Save the current cursor position (row and column)
+    cursor_row=$(tput lines)
+    cursor_col=0
 
-    for((i=0;i<=length;i++)); do
-        tput rc
-        echo "${padding}c${string:i:length}"
+    for ((i = 0; i <= length; i++)); do
+        # Move the cursor to the saved position
+        tput cup $cursor_row $cursor_col
+
+        # Print the current frame with padding
+        echo -n "${padding}c${string:i:length}"
         sleep "$interval"
-        tput rc
-        echo "${padding}C${string:i:length}"
-        sleep "${interval}"
+
+        # Move the cursor back to the saved position
+        tput cup $cursor_row $cursor_col
+
+        # Print the next frame with padding
+        echo -n "${padding}C${string:i:length}"
+        sleep "$interval"
+
+        # Increase the padding for the next iteration
         padding+="${pad}"
     done
 
+    # Restore the cursor visibility
     tput cnorm
-    tput rc
-    echo "${padding}"
+
+    # Move to the next line after the animation completes
+    echo
 }
