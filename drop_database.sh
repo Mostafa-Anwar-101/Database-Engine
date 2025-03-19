@@ -1,12 +1,12 @@
 #!/usr/bin/bash
 source utils.sh
 
-drop_database() {
-    local db_path="databases"
-
-   if ! is_db_dir_exist "$db_path"; then
-    zenity --error --text="No databases available to drop."
-    return
+function drop_database() {
+    list_databases 
+    
+    if [ $? -eq 1 ]; then
+        echo "Returning to main menu..."
+        return
     fi
 
     local db_list=()

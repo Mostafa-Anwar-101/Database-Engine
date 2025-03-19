@@ -4,11 +4,14 @@ source utils.sh
 source ./tables_menu.sh
 
 connect_to_database() {
-    local db_path="databases"
+    db_name=$(zenity --entry --title="Connect to Database" --text="Enter database name:" --width=500 --height=450)
+    
+    #export db_name="$db_name"
 
-    if ! is_db_dir_exist "$db_path"; then
-    zenity --error --text="No databases available to drop."
-    return
+    if [ $? -eq 1 ];then
+            pacMan "....Exiting....  " 0.05 "."
+            echo "Thanks for using our Database Engine "
+            exit
     fi
 
     local db_list=()
