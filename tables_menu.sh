@@ -10,7 +10,7 @@ source delete_from_table.sh
 source update_table.sh
 
 function tables_menu(){
-    pwd
+    
     while true; do
         choice=$(zenity --list --width=500 --height=450\
         --title="Main Menu" \
