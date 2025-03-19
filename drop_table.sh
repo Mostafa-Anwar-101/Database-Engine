@@ -1,3 +1,4 @@
+
 function drop_table() {
     pwd
     if [[ -z "$db_name" ]]; then

@@ -1,3 +1,4 @@
+
 function list_tables() {
     pwd
     if [[ -z "$db_name" ]]; then

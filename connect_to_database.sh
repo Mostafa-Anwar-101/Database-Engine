@@ -19,6 +19,7 @@ connect_to_database() {
     # done
 
     # db_name=$(zenity --list --title="Connect to Database" --column="Databases" --width=500 --height=450 )
+     
      pwd
     if [[ -n "$db_name" ]]; then
         zenity --info --text="Connected to database '$db_name'."
