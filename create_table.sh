@@ -78,4 +78,4 @@ function create_table() {
     zenity --info --text="Table '$table_name' created successfully in database '$db_name'."
 }
 
-create_table
+

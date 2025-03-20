@@ -6,7 +6,7 @@ function drop_table() {
         return
     fi
 
-    tables=($(ls *.table 2>/dev/null | sed  sed 's/.table$//'))
+    tables=($(ls *.table 2>/dev/null | sed  's/.table$//'))
 
     if [[ ${#tables[@]} -eq 0 ]]; then
         zenity --info --title="Info" --text="No tables found in database '$db_name'."

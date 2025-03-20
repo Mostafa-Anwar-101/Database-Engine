@@ -1,3 +1,0 @@
-Columns: id: na: age:
-DataTypes: int: string: int:
-PrimaryKey: id:
