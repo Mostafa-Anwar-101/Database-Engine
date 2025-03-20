@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 function insert_into_table() {
     if [[ -z "$db_name" ]]; then
         zenity --error --text="No database selected. Use 'connectDatabase' first."

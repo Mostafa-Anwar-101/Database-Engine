@@ -1,3 +1,3 @@
-Columns: id: name: age:
-DataTypes: int: int: int:
+Columns: id: name: age: salary: job:
+DataTypes: int: string: int: int: string:
 PrimaryKey: id:

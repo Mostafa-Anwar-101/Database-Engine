@@ -1,4 +1,3 @@
-
 #!/usr/bin/bash
 
 function create_table() {

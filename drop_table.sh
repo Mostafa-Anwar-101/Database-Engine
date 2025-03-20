@@ -1,3 +1,4 @@
+#!/usr/bin/bash
 
 function drop_table() {
     pwd
