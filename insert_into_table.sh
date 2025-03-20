@@ -1,7 +1,4 @@
-#!/usr/bin/bash
-
 function insert_into_table() {
-    pwd
     if [[ -z "$db_name" ]]; then
         zenity --error --text="No database selected. Use 'connectDatabase' first."
         return
@@ -17,12 +14,10 @@ function insert_into_table() {
     metadata_file="$table_name.table"
     data_file="$table_name.data"
 
-    # Extract metadata using AWK
-    columns=($(awk -F': ' '/Columns:/ {for (i=2; i<=NF; i++) print $i}' "$metadata_file"))
-    datatypes=($(awk -F': ' '/DataTypes:/ {for (i=2; i<=NF; i++) print $i}' "$metadata_file"))
-    primary_key=$(awk -F': ' '/PrimaryKey:/ {print $2}' "$metadata_file" | tr -d ' ')
+    columns=($(awk -F':' '/Columns:/ {for (i=2; i<=NF; i++) print $i}' "$metadata_file" | tr -d ' '))
+    datatypes=($(awk -F':' '/DataTypes:/ {for (i=2; i<=NF; i++) print $i}' "$metadata_file" | tr -d ' '))
+    primary_key=$(awk -F':' '/PrimaryKey:/ {print $2}' "$metadata_file" | tr -d ' ')
 
-    # Read existing primary key values
     pk_index=-1
     for i in "${!columns[@]}"; do
         if [[ "${columns[$i]}" == "$primary_key" ]]; then
@@ -33,7 +28,6 @@ function insert_into_table() {
 
     existing_pks=($(cut -d: -f$((pk_index + 1)) "$data_file"))
 
-    # Insert new row
     row_values=()
     for i in "${!columns[@]}"; do
         while true; do
@@ -44,7 +38,6 @@ function insert_into_table() {
                 continue
             fi
 
-            # Validate Data Type
             if [[ "${datatypes[$i]}" == "int" && ! "$value" =~ ^[0-9]+$ ]]; then
                 zenity --error --text="Invalid input. ${columns[$i]} must be an integer."
                 continue
@@ -53,10 +46,11 @@ function insert_into_table() {
                 continue
             fi
 
-            # Check primary key uniqueness
-            if [[ "$i" -eq "$pk_index" && " ${existing_pks[@]} " =~ " $value " ]]; then
-                zenity --error --text="Error: Primary key '$value' already exists!"
-                continue
+            if [[ "$i" -eq "$pk_index" ]]; then
+                if [[ " ${existing_pks[*]} " =~ " $value " ]]; then
+                    zenity --error --text="Error: Primary key '$value' already exists!"
+                    continue
+                fi
             fi
 
             row_values+=("$value")
@@ -64,7 +58,6 @@ function insert_into_table() {
         done
     done
 
-    # Write data to file
     echo "${row_values[*]}" | tr ' ' ':' >> "$data_file"
     zenity --info --text="Record inserted successfully into '$table_name'."
 }

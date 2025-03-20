@@ -1,0 +1,3 @@
+Columns:id: nm:
+DataTypes:int: string:
+PrimaryKey:id:
