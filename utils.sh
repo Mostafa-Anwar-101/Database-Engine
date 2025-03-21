@@ -46,6 +46,65 @@ function display_html_table() {
     xdg-open "$html_file"
 }
 
+function display_filtered_html_table() {
+    local table_name="$1"
+    shift
+    local -a columns=("$@")
+
+    local value="${columns[@]: -1}"
+    unset 'columns[-1]'     
+
+    local column="${columns[@]: -1}"
+    unset 'columns[-1]'            
+
+    local data_file="$table_name.data"
+    local html_file="/tmp/${table_name}_filtered.html"
+
+    local col_index=-1
+    for i in "${!columns[@]}"; do
+        if [[ "${columns[$i]}" == "$column" ]]; then
+            col_index=$i
+            break
+        fi
+    done
+
+    if [[ "$col_index" -eq -1 ]]; then
+        zenity --error --text="Column '$column' not found."
+        return
+    fi
+
+    echo "<html><head><title>Filtered Records</title></head><body>" > "$html_file"
+    echo "<h2>Matching Records in Table: $table_name</h2>" >> "$html_file"
+    echo "<table border='1' cellpadding='8' cellspacing='0' style='border-collapse: collapse;'>" >> "$html_file"
+
+    echo "<tr>" >> "$html_file"
+    for col in "${columns[@]}"; do
+        echo "<th>$col</th>" >> "$html_file"
+    done
+    echo "</tr>" >> "$html_file"
+
+    
+    local found_records=0
+    while IFS=: read -r -a row; do
+        if [[ "${row[$col_index]}" == "$value" ]]; then
+            echo "<tr>" >> "$html_file"
+            for cell in "${row[@]}"; do
+                echo "<td>$cell</td>" >> "$html_file"
+            done
+            echo "</tr>" >> "$html_file"
+            found_records=1
+        fi
+    done < "$data_file"
+
+    echo "</table></body></html>" >> "$html_file"
+
+    if [[ "$found_records" -eq 0 ]]; then
+        zenity --info --title="No Matching Records" --text="No records found where '$column' = '$value'."
+    else
+        xdg-open "$html_file"
+    fi
+}
+
 function pacMan() {
     local string="${1}"
     local interval="${2}"
