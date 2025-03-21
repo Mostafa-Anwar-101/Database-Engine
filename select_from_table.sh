@@ -25,8 +25,7 @@ function select_from_table() {
         --radiolist --column="Select" --column="Option" TRUE "Select All" FALSE "Select With Condition")
 
     if [[ "$choice" == "Select All" ]]; then
-        result=$(awk -F: '{print}' "$data_file" | tr ':' '\t')
-        zenity --info --title="All Records in '$table_name'" --text="$result"
+        display_html_table "$table_name" "${columns[@]}"
    
     fi
 }

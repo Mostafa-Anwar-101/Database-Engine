@@ -16,6 +16,36 @@ function exit_program(){
             exit
 }
 
+
+function display_html_table() {
+    local table_name="$1"
+    local columns=("${@:2}")
+    local data_file="$table_name.data"
+    local html_file="/tmp/${table_name}_output.html"
+
+    echo "<html><head><title>$table_name Data</title></head><body>" > "$html_file"
+    echo "<h2>Records in Table: $table_name</h2>" >> "$html_file"
+    echo "<table border='1' cellpadding='5' cellspacing='0' style='border-collapse: collapse;'>" >> "$html_file"
+
+    echo "<tr>" >> "$html_file"
+    for col in "${columns[@]}"; do
+        echo "<th>$col</th>" >> "$html_file"
+    done
+    echo "</tr>" >> "$html_file"
+
+    while IFS=: read -r "${columns[@]}"; do
+        echo "<tr>" >> "$html_file"
+        for col in "${columns[@]}"; do
+            echo "<td>${!col}</td>" >> "$html_file"
+        done
+        echo "</tr>" >> "$html_file"
+    done < "$data_file"
+
+    echo "</table></body></html>" >> "$html_file"
+
+    xdg-open "$html_file"
+}
+
 function pacMan() {
     local string="${1}"
     local interval="${2}"
