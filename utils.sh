@@ -1,5 +1,10 @@
 #!/usr/bin/bash
 
+Back_to_main_menu(){
+    cd ../..
+    main_menu
+}
+
 function is_db_dir_exist() {
     local db_path="$1"
 

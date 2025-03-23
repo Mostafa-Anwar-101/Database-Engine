@@ -23,6 +23,7 @@ function tables_menu(){
         "Select From Table" \
         "Delete From Table" \
         "Update Table" \
+        "Back to Main Menu" \
         )
         if [ $? -eq 1 ];then
             exit_program
@@ -42,6 +43,8 @@ function tables_menu(){
                    delete_from_table;;
                 "Update Table" )
                     update_table;;
+                "Back to Main Menu" )
+                    Back_to_main_menu;;
                 *)
                     zenity --error --text="Invalid selection. Try again." ;;
             esac
