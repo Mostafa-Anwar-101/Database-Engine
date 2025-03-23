@@ -38,10 +38,10 @@ function display_html_table() {
     done
     echo "</tr>" >> "$html_file"
 
-    while IFS=: read -r "${columns[@]}"; do
+    while IFS=: read -r -a row; do
         echo "<tr>" >> "$html_file"
-        for col in "${columns[@]}"; do
-            echo "<td>${!col}</td>" >> "$html_file"
+        for cell in "${row[@]}"; do
+            echo "<td>$cell</td>" >> "$html_file"
         done
         echo "</tr>" >> "$html_file"
     done < "$data_file"

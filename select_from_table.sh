@@ -21,7 +21,7 @@ function select_from_table() {
 
     columns=($(awk -F':' '/Columns:/ {for (i=2; i<=NF; i++) print $i}' "$metadata_file" | tr -d ' '))
 
-    choice=$(zenity --list --title="Select Option" --text="Choose a select option:" \
+    choice=$(zenity --list --width=500 --height=450 --title="Select Option" --text="Choose a select option:" \
         --radiolist --column="Select" --column="Option" TRUE "Select All" FALSE "Select With Condition")
 
     if [[ -z "$choice" ]]; then
@@ -33,7 +33,7 @@ function select_from_table() {
    
    elif [[ "$choice" == "Select With Condition" ]]; then
 
-        column=$(zenity --list --title="Select Column" --text="Choose a column to filter by:" \
+        column=$(zenity --list --width=500 --height=450 --title="Select Column" --text="Choose a column to filter by:" \
             --radiolist --column="Select" --column="Column" $(for col in "${columns[@]}"; do echo "FALSE $col"; done))
 
         if [[ -z "$column" ]]; then
