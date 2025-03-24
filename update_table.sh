@@ -18,6 +18,15 @@ function update_table() {
 
     columns=($(awk -F':' '/Columns:/ {for (i=2; i<=NF; i++) print $i}' "$metadata_file" | tr -d ' '))
     datatypes=($(awk -F':' '/DataTypes:/ {for (i=2; i<=NF; i++) print $i}' "$metadata_file" | tr -d ' '))
+    primary_key=$(awk -F':' '/PrimaryKey:/ {print $2}' "$metadata_file" | tr -d ' ')
+
+    pk_index=-1
+    for i in "${!columns[@]}"; do
+        if [[ "${columns[$i]}" == "$primary_key" ]]; then
+            pk_index=$i
+            break
+        fi
+    done
 
     condition_column=$(zenity --list --width=500 --height=450 --title="Select Condition Column" --text="Choose a column to filter by:" \
         --radiolist --column="Select" --column="Column" $(for col in "${columns[@]}"; do echo "FALSE $col"; done))
@@ -118,6 +127,20 @@ function update_table() {
             return
             ;;
     esac
+
+    if [[ "$update_col_index" -eq "$pk_index" ]]; then
+        existing_pks=($(awk -F: -v pk_col=$((pk_index+1)) '{print $pk_col}' "$data_file"))
+        for pk in "${existing_pks[@]}"; do
+            if [[ "$pk" == "$new_value" ]]; then
+                current_pk=$(awk -F: -v cond_col=$((condition_col_index+1)) -v cond_val="$condition_value" \
+                    '$cond_col == cond_val {print $'$((pk_index+1))'}' "$data_file")
+                if [[ "$pk" != "$current_pk" ]]; then
+                    zenity --error --text="Primary key value '$new_value' already exists in the table."
+                    return
+                fi
+            fi
+        done
+    fi
 
     temp_file=$(mktemp)
     updated=0
