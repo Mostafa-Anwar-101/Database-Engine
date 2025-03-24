@@ -69,4 +69,3 @@ function select_from_table() {
         return
     fi
 }
-
