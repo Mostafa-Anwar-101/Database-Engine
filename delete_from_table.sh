@@ -23,7 +23,7 @@ function delete_from_table() {
     datatypes=($(awk -F':' '/DataTypes:/ {for (i=2; i<=NF; i++) print $i}' "$metadata_file" | tr -d ' '))
     primary_key=$(awk -F':' '/PrimaryKey:/ {print $2}' "$metadata_file" | tr -d ' ')
 
-    delete_option=$(zenity --list --title="Delete Option" --text="Choose how to select records to delete:" \
+    delete_option=$(zenity --list --width=500 --height=450 --title="Delete Option" --text="Choose how to select records to delete:" \
         --radiolist --column="Select" --column="Option" \
         TRUE "Delete by Primary Key" \
         FALSE "Delete with Condition")
@@ -87,7 +87,7 @@ function delete_from_table() {
         fi
 
     else
-        column=$(zenity --list --title="Select Column" --text="Choose a column to filter by:" \
+        column=$(zenity --list --width=500 --height=450 --title="Select Column" --text="Choose a column to filter by:" \
             --radiolist --column="Select" --column="Column" $(for col in "${columns[@]}"; do echo "FALSE $col"; done))
 
         if [[ -z "$column" ]]; then
@@ -111,12 +111,12 @@ function delete_from_table() {
         fi
 
         if [[ "$col_type" == "int" ]]; then
-            operator=$(zenity --list --title="Select Operator" \
+            operator=$(zenity --list --width=500 --height=450 --title="Select Operator" \
                 --text="Choose comparison operator for '$column':" \
                 --radiolist --column="Select" --column="Operator" \
                 TRUE "=" FALSE "!=" FALSE "<" FALSE ">" FALSE "<=" FALSE ">=")
         else
-            operator=$(zenity --list --title="Select Operator" \
+            operator=$(zenity --list --width=500 --height=450 --title="Select Operator" \
                 --text="Choose comparison operator for '$column':" \
                 --radiolist --column="Select" --column="Operator" \
                 TRUE "=" FALSE "!=")

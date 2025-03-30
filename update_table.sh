@@ -7,6 +7,9 @@ function update_table() {
     fi
 
     table_name=$(zenity --entry --title="Update Table" --text="Enter table name:")
+    if [[ $? -ne 0 || -z "$table_name" ]]; then
+        return
+    fi
 
     metadata_file="$table_name.table"
     data_file="$table_name.data"
@@ -51,7 +54,20 @@ function update_table() {
         return
     fi
 
-    condition_value=$(zenity --entry --title="Select Condition Value" --text="Enter value for '$condition_column':")
+    if [[ "$condition_col_type" == "int" ]]; then
+        operator=$(zenity --list --width=500 --height=450 --title="Select Operator" \
+            --text="Choose comparison operator for '$condition_column':" \
+            --radiolist --column="Select" --column="Operator" \
+            TRUE "=" FALSE "!=" FALSE "<" FALSE ">" FALSE "<=" FALSE ">=")
+    else
+        operator="=" 
+    fi
+
+    if [[ -z "$operator" ]]; then
+        return
+    fi
+
+    condition_value=$(zenity --entry --title="Select Condition Value" --text="Enter value for '$condition_column' $operator:")
 
     if [[ -z "$condition_value" ]]; then
         zenity --error --text="Condition value cannot be empty."
@@ -145,18 +161,28 @@ function update_table() {
     temp_file=$(mktemp)
     updated=0
     while IFS=: read -r -a record; do
-        if [[ "${record[$condition_col_index]}" == "$condition_value" ]]; then
+        match=false
+        case "$operator" in
+            "=") [[ "${record[$condition_col_index]}" == "$condition_value" ]] && match=true ;;
+            "!=") [[ "${record[$condition_col_index]}" != "$condition_value" ]] && match=true ;;
+            "<") (( record[$condition_col_index] < condition_value )) && match=true ;;
+            ">") (( record[$condition_col_index] > condition_value )) && match=true ;;
+            "<=") (( record[$condition_col_index] <= condition_value )) && match=true ;;
+            ">=") (( record[$condition_col_index] >= condition_value )) && match=true ;;
+        esac
+
+        if $match; then
             record[$update_col_index]="$new_value"
-            updated=1
+            updated=$((updated + 1))
         fi
         echo "${record[*]}" | tr ' ' ':' >> "$temp_file"
     done < "$data_file"
 
     if [[ "$updated" -eq 0 ]]; then
-        zenity --info --title="No Matching Records" --text="No records found where '$condition_column' = '$condition_value'."
+        zenity --info --title="No Matching Records" --text="No records found where '$condition_column' $operator '$condition_value'."
         rm "$temp_file"
     else
         mv "$temp_file" "$data_file"
-        zenity --info --title="Update Successful" --text="Record(s) updated successfully."
+        zenity --info --title="Update Successful" --text="Updated $updated record(s) where '$condition_column' $operator '$condition_value'." --no-markup
     fi
 }
