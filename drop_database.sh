@@ -2,6 +2,7 @@
 source utils.sh
 
 function drop_database() {
+    local db_path="./databases"
     list_databases 
     
     if [ $? -eq 1 ]; then
